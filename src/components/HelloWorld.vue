@@ -2,18 +2,25 @@
   <div id="app">
     <main>
       <div class="search-box">
-        <input type="text" class="search-bar" placeholder="Search......." v-model="query"
-        @keypress="fetchWeather">
-      
+        <input
+          type="text"
+          class="search-bar"
+          placeholder="Search......."
+          v-model="query"
+          @keypress="fetchWeather"/>
       </div>
-      <div class="weather-wrap">
+      <div class="weather-wrap" v-if="typeof weather.main != 'undefined'">
         <div class="location-box">
-          <div class="location">Pakistan,Islamabad</div>
-          <div class="date">Thursday March 30,2023</div>
+          <div class="location">
+            {{ weather.name }},{{ weather.sys.country }}
+          </div>
+
+          <!-- //function to view dates -->
+          <div class="date">{{dateBuilder()}}</div>
         </div>
         <div class="weather-box">
-          <div class="temp">21°C</div>
-          <div class="weather">Rain</div>
+          <div class="temp">{{ Math.round(weather.main.temp) }}°C</div>
+          <div class="weather">{{ weather.weather[0].main }}</div>
         </div>
       </div>
     </main>
@@ -26,33 +33,68 @@ export default {
   name: "HelloWorld",
   data() {
     return {
+      // Api accessed
       api_key: "5b0600b6c0aebd04b20ece8befab2fbc",
-      url_base:'https://api.openweathermap.org/data/2.5/',
+      url_base: "https://api.openweathermap.org/data/2.5/",
       //data which we search in search bar
-      query:'',
-      //get data from API and store in weather variable
-      weather:{}
+      query: "",
+      //get data from API and store in weather variable      // Api accessed
+
+      weather: {},
     };
   },
-  methods:{
-    fetchWeather(e){
-      if(e.key=="Enter"){
-        fetch(`${this.url_base}weather?q=${this.query}&units=matric&APPID=${this.api_key}`)
-
-        //callback function
-        .then(res=>{
-          return res.json()
-        }).then(this.setResults)
+  methods: {
+    fetchWeather(e) {
+      if (e.key == "Enter") {
+        fetch(
+          `${this.url_base}weather?q=${this.query}&units=matric&APPID=${this.api_key}`
+        )
+          //callback function
+          .then((res) => {
+            return res.json();
+          })
+          .then(this.setResults);
       }
-},
-setResults(results){
-  this.weather=results;
-}
-  }
+    },
+    setResults(results) {
+      this.weather = results;
+    },
+    dateBuilder() {
+      let d = new Date();
+      let months = [
+        "January",
+        "February",
+        "March",
+        "April",
+        "May",
+        "June",
+        "July",
+        "August",
+        "September",
+        "October",
+        "November",
+        "December",
+      ];
+      let days = [
+        "Monday",
+        "Tuesday",
+        "Wednesday",
+        "Thursday",
+        "Friday",
+        "Saturday",
+        "Sunday",
+      ];
+      let day = days[d.getDay()];
+      let date = d.getDate();
+      let month = months[d.getMonth()];
+      let year = d.getFullYear();
 
-
+      return `${day} ${date} ${month} ${year}`;
+    },
+  },
 };
 </script>
+
 <style>
 * {
   margin: 0;
@@ -109,47 +151,44 @@ After clicking on search bar background color or shadow of search bar is changed
   background-color: rgba(255, 255, 255, 0.75);
   border-radius: 16px 0px 16px 0px;
 }
-.location-box .location{
-  color: #FFF;
+.location-box .location {
+  color: #fff;
   font-size: 20px;
   font-weight: 300;
   text-align: center;
   font-style: italic;
-  text-shadow: 1px 3px rgba(0,0,0,0.25);
+  text-shadow: 1px 3px rgba(0, 0, 0, 0.25);
 }
-.location-box .date{
-  color: #FFF;
+.location-box .date {
+  color: #fff;
   font-size: 20px;
   font-weight: 300;
   text-align: center;
   font-style: italic;
 }
-.weather-box{
+.weather-box {
   text-align: center;
 }
-.weather-box .temp{
+.weather-box .temp {
   display: inline-block;
   padding: 10px 25px;
-  color: #FFF;
+  color: #fff;
   font-size: 102px;
   font-weight: 900;
 
-
-
-
-  text-shadow:  3px 6px rgba(0, 0, 0, 0.25);
+  text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
   background-color: rgba(255, 255, 255, 0.25);
-  border-radius:16px;
+  border-radius: 16px;
   margin: 30px 0px;
 
-  box-shadow: 3px 6px rgba(0,0,0,0.25);
+  box-shadow: 3px 6px rgba(0, 0, 0, 0.25);
 }
-.weather-box .weather{
-  color: #FFF;
+.weather-box .weather {
+  color: #fff;
   font-size: 48px;
   font-weight: 700;
   font-style: italic;
-  text-shadow: 3px 6px rgba(0,0,0,0.25);
+  text-shadow: 3px 6px rgba(0, 0, 0, 0.25);
 }
 </style>
 
